@@ -1,7 +1,3 @@
-Certainly! Here's a sample README.md file for your GitHub repository:
-
----
-
 # Hand Gesture Recognition
 
 This repository contains code for training a machine learning model to recognize hand gestures from videos and a Python script to predict hand gestures in real-time using a webcam.
@@ -39,7 +35,3 @@ This repository contains code for training a machine learning model to recognize
    ```
 2. Open a web browser and navigate to `http://localhost:5000` to view the real-time prediction dashboard.
 3. The webcam feed will be displayed along with the detected hand landmarks. The corresponding buttons will be highlighted based on the predicted hand gesture.
-
-## Contributing
-
-Contributions are welcome! If you have any suggestions, improvements, or bug fixes, please feel free to open an issue or submit a pull request.
