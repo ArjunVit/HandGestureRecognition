@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Gesture Control Dashboard</title>
+    <style>
+        body {
+            flex-flow: column;
+            justify-content:space-around;
+            align-items: center;
+            display: flex;
+        }
+        .maindiv {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height:700px;
+            width: 1000px;
+        }
+        .direction {
+            text-align: center;
+            border: 2px solid black;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            font-size: 24px;
+            line-height: 100px;
+            display: inline-block;
+        }
+        .div-block3 {
+            flex-flow: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #upper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #lower {
+            display: flex;
+        }
+        #video-container {
+            margin: auto;
+            width: 100%;
+        }
+        /* img {
+            width: 100px;
+        } */
+        #predicted-class {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+        .active {
+            background-color: yellow;
+        }
+        .activer {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="maindiv">
+        <div id="video-container">
+            <img src="{{ url_for('video_feed') }}" alt="Video Stream">
+        </div>
+        <div style="display: flex;">
+            <div class="div-block3" style="display: flex; justify-content: space-evenly;">
+                <div id="upper" style="display: flex; justify-content: space-evenly;">
+                    <div class="direction" id="forward">▲</div>
+                </div>
+                <div id="lower" style="display: flex; justify-content: space-between;">
+                    <div class="direction" id="left" style="justify-content: space-between;">◀</div>
+                    <div class="direction" id="backward" style="justify-content: space-between;">▼</div>
+                    <div class="direction" id="right" style="justify-content: space-between;">▶</div>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        function highlightButton(predictedClass) {
+            const ids = ['forward', 'right', 'left', 'backward'];
+            for(i=0; i<4; i++) {
+                document.getElementById(ids[i]).classList.remove('active');
+                document.getElementById(ids[i]).classList.remove('activer');
+            }
+            switch(predictedClass) {
+                case 'Forward':
+                    document.getElementById('forward').classList.add('active');
+                    document.getElementById('right').classList.remove('active');
+                    document.getElementById('left').classList.remove('active');
+                    document.getElementById('backward').classList.remove('active');
+                    break;
+                case 'ForwardRight':
+                    document.getElementById('forward').classList.add('active');
+                    document.getElementById('right').classList.add('active');
+                    document.getElementById('left').classList.remove('active');
+                    document.getElementById('backward').classList.remove('active');
+                    break;
+                case 'ForwardLeft':
+                    document.getElementById('forward').classList.add('active');
+                    document.getElementById('left').classList.add('active');
+                    document.getElementById('right').classList.remove('active');
+                    document.getElementById('backward').classList.remove('active');
+                    break;
+                case 'Reverse':
+                    document.getElementById('backward').classList.add('active');
+                    document.getElementById('right').classList.remove('active');
+                    document.getElementById('left').classList.remove('active');
+                    document.getElementById('forward').classList.remove('active');
+                    break;
+                case 'ReverseRight':
+                    document.getElementById('backward').classList.add('active');
+                    document.getElementById('right').classList.add('active');
+                    document.getElementById('left').classList.remove('active');
+                    document.getElementById('forward').classList.remove('active');
+                    break;
+                case 'ReverseLeft':
+                    document.getElementById('backward').classList.add('active');
+                    document.getElementById('left').classList.add('active');
+                    document.getElementById('right').classList.remove('active');
+                    document.getElementById('forward').classList.remove('active');
+                    break;
+                case 'Stop':
+                    document.getElementById('backward').classList.add('activer');
+                    document.getElementById('left').classList.add('activer');
+                    document.getElementById('right').classList.add('activer');
+                    document.getElementById('forward').classList.add('activer');
+                    break;
+            }
+        }
+        var socket = io();
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+        socket.on('disconnect', function() {
+            console.log('Disconnected from server');
+        });
+        socket.on('predicted_class', function(data) {
+            var predictedClass = data.class_label;
+            highlightButton(predictedClass);
+        });
+    </script>
+</body>
+</html>
